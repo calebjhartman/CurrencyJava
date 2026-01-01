@@ -3,6 +3,7 @@ package com.example.currency_converter.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.currency_converter.dto.ConversionResponse;
+import com.example.currency_converter.service.CurrencyService;
 
 import java.math.BigDecimal;
 
@@ -15,13 +16,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/api")
 public class CurrencyController {
 
-@GetMapping("/convert")
-public ConversionResponse convertCurrencies(@RequestParam String from, @RequestParam String to, @RequestParam BigDecimal amount) {
-    BigDecimal rate = new BigDecimal("1.05");
-    BigDecimal convertedAmount = amount.multiply(rate);
+    private final CurrencyService currencyService;
 
-    return new ConversionResponse(from, to, amount, rate, convertedAmount); 
-}
+    // Prepare for the injection of the depdendecy
+    public CurrencyController(CurrencyService currencyService) { this.currencyService = currencyService; }
+
+    @GetMapping("/convert")
+    public ConversionResponse convertCurrencies(@RequestParam String from, @RequestParam String to, @RequestParam BigDecimal amount) {
+        BigDecimal rate = currencyService.getRate(from, to);
+        BigDecimal convertedAmount = amount.multiply(rate);
+
+        return new ConversionResponse(from, to, amount, rate, convertedAmount); 
+    }
 
 
     

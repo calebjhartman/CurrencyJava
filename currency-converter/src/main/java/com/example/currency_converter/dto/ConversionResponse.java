@@ -1,7 +1,8 @@
 package com.example.currency_converter.dto;
 
 import java.math.BigDecimal;
-
+// This is really just an object that Spring automatically uses to create JSON objects returned to the endpoint. 
+// It automatically makes use of the getters and setters.
 public class ConversionResponse {
 
     private String from;
