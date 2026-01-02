@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 // It automatically makes use of the getters and setters.
 public class ConversionResponse {
 
+    private String status;
     private String from;
     private String to;
     private BigDecimal amount;
@@ -15,13 +16,18 @@ public class ConversionResponse {
     }
 
 
-    public ConversionResponse(String from, String to, BigDecimal amount, BigDecimal rate, BigDecimal convertedAmount) {
+    public ConversionResponse(String status, String from, String to, BigDecimal amount, BigDecimal rate, BigDecimal convertedAmount) {
+        this.status = status;
         this.from = from;
         this.to = to;
         this.amount = amount;
         this.rate = rate;
         this.convertedAmount = convertedAmount;
     }
+
+    public void setStatus(String status) {this.status = status; }
+    
+    public String getStatus() { return this.status; }
     
     public void setFrom(String from) {this.from = from; }
     
