@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CurrencyController {
 
     private final CurrencyService currencyService;
-
-
+    
     // Prepare for the injection of the depdendecy
     public CurrencyController(CurrencyService currencyService) { this.currencyService = currencyService; }
 
@@ -31,7 +30,7 @@ public class CurrencyController {
         try {
             // Get the conversion response
             ConversionResponse conversion = currencyService.convert(from, to, amount);
-            System.out.println("CONVERSION: " + from + " --> " + to + " @ " + conversion.getRate() + " -- " + conversion.getConvertedAmount());
+            System.out.println(amount + " CONVERSION: " + from + " --> " + to + " @ " + conversion.getRate() + " -- " + conversion.getConvertedAmount());
             // Wrap it in a response "OK" entity
             return ResponseEntity.status(200).body(conversion);
         }
