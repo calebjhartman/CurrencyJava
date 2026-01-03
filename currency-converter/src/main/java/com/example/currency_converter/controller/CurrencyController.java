@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/curr/")
 public class CurrencyController {
 
     private final CurrencyService currencyService;
@@ -25,20 +25,19 @@ public class CurrencyController {
     // Prepare for the injection of the depdendecy
     public CurrencyController(CurrencyService currencyService) { this.currencyService = currencyService; }
 
+    // Public convert -- no sign-in needed.
     @GetMapping("/convert")
     public ResponseEntity<?> convertCurrencies(@RequestParam String from, @RequestParam String to, @RequestParam BigDecimal amount) { 
         try {
-            BigDecimal rate = currencyService.getRate(from, to);
-            BigDecimal convertedAmount = amount.multiply(rate);
-            System.out.println("CONVERSION: " + from + " --> " + to + " @ " + rate + " -- " + convertedAmount);
-
-            ConversionResponse body = new ConversionResponse("status", from, to, amount, rate, convertedAmount);
-            return ResponseEntity.status(200).body(body);
+            // Get the conversion response
+            ConversionResponse conversion = currencyService.convert(from, to, amount);
+            System.out.println("CONVERSION: " + from + " --> " + to + " @ " + conversion.getRate() + " -- " + conversion.getConvertedAmount());
+            // Wrap it in a response "OK" entity
+            return ResponseEntity.status(200).body(conversion);
         }
         // When a currency code is not found.
         catch (CurrencyCodeNotFound e) {
             System.out.println("FAILED CONVERSION: " + from + " --> " + to);
-
             ErrorResponse error = new ErrorResponse("failed", e.getMessage(), e.getErrorCode());
             return ResponseEntity.status(e.getErrorCode()).body(error);
         }
@@ -46,6 +45,7 @@ public class CurrencyController {
         catch (Exception e) {
             System.out.println("FAILED CONVERSION: " + from + " --> " + to);
             ErrorResponse error = new ErrorResponse("failed", e.getMessage(), 502);
+
             return ResponseEntity.status(502).body(error);
 
         }
