@@ -30,6 +30,6 @@ jobs:
           cache: maven
 
       - name: Run tests
-        working-directory: ./src/main/java/com/example/currency_converter
+        working-directory: ./currency_converter
         run: mvn -B test
 
