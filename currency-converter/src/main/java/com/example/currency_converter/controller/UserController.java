@@ -48,7 +48,7 @@ public class UserController {
         // Otherwise... send an error. 
         } else {
             ErrorResponse error = new ErrorResponse(
-                "USER_NOT_FOUND",
+                "failed",
                 "User with ID " + id + " not found",
                 404
             );

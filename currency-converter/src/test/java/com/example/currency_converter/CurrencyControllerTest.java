@@ -1,6 +1,9 @@
 package com.example.currency_converter;
 
 import com.example.currency_converter.dto.ConversionResponse;
+import com.example.currency_converter.entity.User;
+import com.example.currency_converter.repository.UserRepository;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +23,9 @@ class CurrencyControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Test
     void publicConvert_ShouldReturn200AndCorrectBody() throws Exception {
@@ -43,8 +49,35 @@ class CurrencyControllerTest {
             .accept(MediaType.APPLICATION_JSON)).andDo(print())
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.status").value("failed"));
-
-
     }
+
+    @Test
+    void getUser_ShouldReturnNoUserExists() throws Exception {
+        mockMvc.perform(get("/api/user/-1")
+        .accept(MediaType.APPLICATION_JSON)).andDo(print())
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.status").value("failed"));
+    }
+
+    @Test
+    void userConvert_ShouldReturn200WithFavoriteCurrency() throws Exception {
+        // Create our mock user
+        User user = new User();
+        user.setUsername("test_acc");
+        user.setFavCurrencyCode("GBP");
+        user = userRepository.save(user);
+
+        mockMvc.perform(get("/api/user/convert")
+            .param("to", "USD")
+            .param("amount", "100")
+            .param("id", user.getId().toString())
+            .accept(MediaType.APPLICATION_JSON)).andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.from").value("GBP"));
+            
+        // Remove it after done.
+        userRepository.delete(user);
+    }
+
 }
 
