@@ -22,20 +22,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
-
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-
 
     private final UserRepository userRepository;
     private final CurrencyService currencyService;
 
     public UserController(UserRepository userRepository, CurrencyService currencyService) { this.userRepository = userRepository; this.currencyService = currencyService;}
 
-    // @RequestBody maps what is sent via the post body to the JSON user with the user entity
+    // @RequestBody maps what is sent via the post body to the JSON user with the user entity.
     @PostMapping
     public User createUser(@RequestBody User userEntity) {
         return userRepository.save(userEntity);
@@ -78,6 +74,7 @@ public class UserController {
                 // Get the conversion response
                 ConversionResponse conversion = currencyService.convert(from, to, amount); 
                 System.out.println(amount + " CONVERSION: " + from + " --> " + to + " @ " + conversion.getRate() + " -- " + conversion.getConvertedAmount());
+
                 // Wrap it in a response "OK" entity
                 return ResponseEntity.status(200).body(conversion);
             }
@@ -101,6 +98,5 @@ public class UserController {
 
         }
     }
-    
     
 }
